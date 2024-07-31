@@ -1,0 +1,29 @@
+1. install manual
+ 	a. docker pull apache/spark:latest
+	b. docker run -it --rm apache/spark:latest /bin/bash
+
+2. install in project dengan docker-compose.yml
+version: '3'
+services:
+  spark-master:
+    image: apache/spark:latest
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "8080:8080"
+    command: ["spark-class", "org.apache.spark.deploy.master.Master"]
+
+  spark-worker:
+    image: apache/spark:latest
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+    command: ["spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+	a. docker-compose up
+
+run environtment
+source path/to/venv/bin/activate
